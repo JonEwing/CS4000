@@ -1,20 +1,45 @@
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <vector>
-#include <algorithm>
-#include <unordered_map>
+////////////////////////////////////////////////////////////////////////////////////////
+// Author: Jonathan Feige
+// File: mapper.cc
+// Date: 04/17/2019
+// Description: This reads in from the standard input cin. 
+// It takes the infromation and compiles it all into an unsorted map. 
+// 						
+//						g++ -o map mapper.cc -I.
+//						g++ -o reduce reduce.cc -I.
+//						cat *file_name*.csv | ./map *ngrams*| ./reduce
+////////////////////////////////////////////////////////////////////////////////////////#include <iostream>
 
+
+#include <algorithm>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 
 using namespace std;
 
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: freq
+// In: N/A
+// Out: N/A
+// Description: This is the struct that helps manage the hashmap
+////////////////////////////////////////////////////////////////////////////////////////
 struct freq
 {
 	int count;
 	string str;
 };
 
-bool wayToSort(freq a, freq b) { return a.count < b.count; }
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: wayToSort
+// In: freq a, freq b
+// Out: bool
+// Description: Helps sort a vector of freqs
+////////////////////////////////////////////////////////////////////////////////////////
+bool wayToSort(freq a, freq b) 
+{
+	return a.count < b.count; 
+}
 
 
 int main()
@@ -24,7 +49,6 @@ int main()
 	std::unordered_map<std::string,int> mymap;
     std::string line;
 
-	int k = 0;
     while(std::getline(std::cin, line)) // read from std::cin
     {
 		struct freq tmp;
@@ -33,25 +57,20 @@ int main()
 		std::getline(std::cin, line);
 		tmp.count = stoi(line);
 		
-		
 		std::unordered_map<std::string,int>::iterator got = mymap.find (tmp.str);
-		if (got == mymap.end())
+		if (got == mymap.end()) //If not in the map
 		{
 			mymap.insert (std::make_pair<std::string,int>((string)tmp.str,(int)tmp.count));
 		}
-		else
+		else //If is in the map
 		{
-			int hold = got-> second;
+			int hold = got-> second; //Add to counter
 			got->second = hold + tmp.count;
 		}	
-	
-		if(k % 100000 == 0)
-		{cout<<k<<endl;}
-		k++;
 	}
 	
 
-	for ( auto it = mymap.begin(); it != mymap.end(); ++it )
+	for (auto it = mymap.begin(); it != mymap.end(); ++it )
 	{
 		struct freq tmp;
 		tmp.str = it->first;
@@ -59,41 +78,9 @@ int main()
 		freq.push_back(tmp);
 	}
 	
-	sort(freq.begin(), freq.end(), wayToSort);
-	for(int j = 0; j < freq.size(); j++)
+	sort(freq.begin(), freq.end(), wayToSort); //sorts
+	for(int j = 0; j < freq.size(); j++) 
 	{
-		cout<<freq[j].str<<" "<<freq[j].count<<endl;
+		cout<<freq[j].str<<" "<<freq[j].count<<endl; //Outputs sorted map
 	}
 }
-	
-	
-	
-	
-	/*bool match = false;
-		for(int i = 0; i < freq.size(); i++)
-		{
-			if(tmp.str == freq[i].str)
-			{
-				freq[i].count += tmp.count;
-				match = true;	
-			}
-		}
-		if(match == false)
-		{			
-			freq.push_back(tmp);
-		}
-		
-		k++;
-		
-		if(k % 100000 == 0)
-		{
-			cout<<k<<endl;
-		}
-		
-		
-		
-	sort(freq.begin(), freq.end(), wayToSort);
-	for(int j = 0; j < freq.size(); j++)
-	{
-		cout<<freq[j].str<<" "<<freq[j].count<<endl;
-	}*/

@@ -12,17 +12,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
-#include <iostream>
 #include <iomanip>
-#include <fstream>
+#include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
-
-string str1 = "https://";
-string str2 = "#";
-
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Name: freq
@@ -37,16 +31,6 @@ struct freq
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Name: wayToSort
-// In: freq a, freq b
-// Out: bool
-// Description: Helps sort a vector of freqs
-////////////////////////////////////////////////////////////////////////////////////////
-bool wayToSort(freq a, freq b) { 
-return a.count < b.count; 
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 // Name: rm_url_hash
 // In: vector<string> test
 // Out: vector<string>
@@ -56,6 +40,9 @@ return a.count < b.count;
 vector<string> rm_url_hash(vector<string> &test)
 {
 	vector<string> ret;
+	string str1 = "https://";
+	string str2 = "#";
+
 	for(int i = 0; i < test.size(); i++)
 	{
 		string tmp = test[i];
@@ -116,7 +103,6 @@ vector<string> mk_ngram(vector<string> &test,int n)
 		}
 		ret.push_back(tmp);
 	}
-	
 	return ret;
 }
 
@@ -138,15 +124,16 @@ int main(int argc, char *argv[]) {
 	int i = 0;
 	while(std::getline(cin, t))
 	while(!cin.eof()) {
-		if(cin.peek() ==',') {
+		if(cin.peek() ==',') //Seperates the cells
+		{
 			char c;
 			cin.get(c);
 		}
 		else{	
-			cin >> quoted(t);
+			cin >> quoted(t); //Reads in the cell
 			i++;
 			
-			while(cin.peek() =='"') {
+			while(cin.peek() =='"') { //Reads in the embeded quote
 				string temp;
 				cin >> quoted(temp);
 				t = t + temp;
@@ -156,7 +143,7 @@ int main(int argc, char *argv[]) {
 			{
 				string hold;
 				istringstream in_string(t);
-				while (in_string >> hold) {
+				while (in_string >> hold) { //Seperates by spaces
 				qouted.push_back(hold);
 				}
 				
@@ -186,7 +173,7 @@ int main(int argc, char *argv[]) {
 					}	
 				}	
 				
-				for(int i = 0; i < freq.size(); i++)
+				for(int i = 0; i < freq.size(); i++) //Send to Reducer
 				{
 					cout<<freq[i].str<<endl;
 					cout<<freq[i].count<<endl;
