@@ -1,3 +1,17 @@
+////////////////////////////////////////////////////////////////////////////////////////
+// Author: Jonathan Feige
+// File: mapper.cc
+// Date: 04/17/2019
+// Description: Takes a file input (twitter data) and parses it down to words. 
+// creats a hash map and passes it through the pipe to reduccer.cc
+// To run: run the make file with make or for manual input
+// 						
+//						g++ -o map mapper.cc -I.
+//						g++ -o reduce reduce.cc -I.
+//						cat *file_name*.csv | ./map *ngrams*| ./reduce
+////////////////////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -9,7 +23,37 @@ using namespace std;
 string str1 = "https://";
 string str2 = "#";
 
-vector<string> rm_url_hash(vector<string> test)
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: freq
+// In: N/A
+// Out: N/A
+// Description: This is the struct that helps manage the hashmap
+////////////////////////////////////////////////////////////////////////////////////////
+struct freq
+{
+	int count;
+	string str;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: wayToSort
+// In: freq a, freq b
+// Out: bool
+// Description: Helps sort a vector of freqs
+////////////////////////////////////////////////////////////////////////////////////////
+bool wayToSort(freq a, freq b) { 
+return a.count < b.count; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: rm_url_hash
+// In: vector<string> test
+// Out: vector<string>
+// Description: This takes a vector of strings and returns a vector of string 
+// -websites and -#
+////////////////////////////////////////////////////////////////////////////////////////
+vector<string> rm_url_hash(vector<string> &test)
 {
 	vector<string> ret;
 	for(int i = 0; i < test.size(); i++)
@@ -26,7 +70,14 @@ vector<string> rm_url_hash(vector<string> test)
 	return ret;
 }
 
-vector<string> rm_special_chars(vector<string> test)
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: rm_special_chars
+// In: vector<string> test
+// Out: void
+// Description: This takes a vector of strings and removes all 
+// special characters from each string in the vector
+////////////////////////////////////////////////////////////////////////////////////////
+void rm_special_chars(vector<string> &test)
 {
 	for(int i = 0; i < test.size(); i++)
 	{
@@ -41,11 +92,16 @@ vector<string> rm_special_chars(vector<string> test)
 			}
 		}
 	}
-	return test;
 }
 
-
-vector<string> mk_ngram(vector<string> test,int n)
+////////////////////////////////////////////////////////////////////////////////////////
+// Name: mk_ngram
+// In: vector<string> test, int n
+// Out: vector<string>
+// Description: This takes a vector  and creates strings, length based on n.
+// These combinations form n-grams.
+////////////////////////////////////////////////////////////////////////////////////////
+vector<string> mk_ngram(vector<string> &test,int n)
 {
 	vector<string> ret;
 	for(int i = 0; i < test.size(); i++)
@@ -64,36 +120,35 @@ vector<string> mk_ngram(vector<string> test,int n)
 	return ret;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
 	string t;
-	int n;
+	vector<freq> freq;
 	vector<string> qouted;
 	vector<string> valid;
 	vector<string> ngrams;
 	
-	cout<<"Enter your filename"<<endl;
 	cin>>t;
 	
-	cout<<"Enter your ngram length"<<endl;
-	cin>>n;
+	int n = atoi(argv[1]);
 	
-	std::ifstream in;
-	in.open(t);
+	string first;
+	getline(cin, first, '\n');
 	
 	int i = 0;
-	while(!in.eof()) {
-		if(in.peek() ==',') {
+	while(std::getline(cin, t))
+	while(!cin.eof()) {
+		if(cin.peek() ==',') {
 			char c;
-			in.get(c);
+			cin.get(c);
 		}
 		else{	
-			in >> quoted(t);
+			cin >> quoted(t);
 			i++;
 			
-			while(in.peek() =='"') {
+			while(cin.peek() =='"') {
 				string temp;
-				in >> quoted(temp);
+				cin >> quoted(temp);
 				t = t + temp;
 			}
 			
@@ -106,17 +161,41 @@ int main() {
 				}
 				
 				valid = rm_url_hash(qouted);
-				valid = rm_special_chars(valid);
+				rm_special_chars(valid);
 				ngrams = mk_ngram(valid,n);
 					
 				int len = ngrams.size() - (n - 1);
+				
 				for(int i = 0; i < len; i++)
 				{
-					cout<<ngrams[i]<<endl;
+					bool match = false;
+					for(int j = 0; j < freq.size(); j++)
+					{
+						if(ngrams[i] == freq[j].str)
+						{
+						match = true;
+						freq[j].count++;
+						}
+					}
+					if(match == false)
+					{
+						struct freq tmp;
+						tmp.str = ngrams[i];
+						tmp.count = 1;
+						freq.push_back(tmp);
+					}	
+				}	
+				
+				for(int i = 0; i < freq.size(); i++)
+				{
+					cout<<freq[i].str<<endl;
+					cout<<freq[i].count<<endl;
 				}
+	
 				qouted.erase (qouted.begin(),qouted.end());
 				valid.erase (valid.begin(),valid.end());
-				ngrams.erase (valid.begin(),valid.end());
+				ngrams.erase (ngrams.begin(),ngrams.end());
+				freq.erase (freq.begin(),freq.end());
 			}
 			else if(i == 30)
 			{
