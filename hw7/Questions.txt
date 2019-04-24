@@ -1,0 +1,80 @@
+PART I
+1)
+Missing ";" on lines 69 and 71
+
+2)
+constructor used is deprecated on line 83: Job job = new Job(conf,"Secret Message");
+replaced with Job job = Job.getInstance(conf,"Secret Message");
+
+3)
+processed_tweets outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains: 
+"RealDWJ	1"
+
+Random_data outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains: 
+"RealAlonzoChurch	551"
+
+4)
+4,515,210,929 bytes used
+4,407,432 kb used
+4,304 mb / block size (128mb)
+34 Blocks used
+
+hdfs fsck random_data.txt confirms 34 Blocks used.
+
+PART II
+1)
+Added the line at 81 "conf.set("Message", otherArgs[0]);" in main because it wasn't passing the secret message. 
+Lines 98,99,100 changed the mapper/reducer to GeneralMapper.class and GeneralReducer.class.
+
+2)
+processed_tweets outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains:
+AgathaGeraldine	1
+ArunaShenoy	1
+CaroleNewman	1
+Danyse1006	1
+GardenNeeds1	1
+Hateless_Speech	1
+Jenikat1	1
+LiepuPuika_13	1
+LinuxSec	1
+MadeYouLook22	1
+Mijiafe	1
+PrioriteGauche	1
+QueenieDinoso	1
+TechnicalManiac	1
+aleex_palma	1
+apriliannur_	1
+gflynn90	1
+iamkjv	1
+warunanc	1
+
+19 Matching tweets, one example AgathaGeraldine
+
+Random_data outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains:
+""
+
+0 Matching tweets, No examples
+
+3)
+processed_tweets outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains:
+SistemKomputer	1
+fk_swagz	1
+
+2 Matching tweets, one example SistemKomputer
+
+Random_data outputs a
+_SUCCESS and part-r-00000
+part-r-00000 contains:
+""
+
+0 Matching tweets, No examples
